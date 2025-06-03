@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider          = "mysql"
+    url               = env("DATABASE_URL")
+    shadowDatabaseUrl = env("DATABASE_SHADOW_URL")
+}
+
+model User {
+    id                  String    @id @default(uuid())
+    email               String    @unique
+    name                String?
+    dateOfBirth         DateTime?
+    image               String?
+    fieldOfStudy        String?
+    university          String?
+    createdAt           DateTime  @default(now())
+    currentFieldOfStudy String?
+    payments            Payment[]
+    isPro               Boolean   @default(false)
+    proEndsAt           DateTime?
+}
+
+model Payment {
+    id         String   @id @default(uuid())
+    // the amount is in TND
+    paymentRef String   @unique
+    amount     Float
+    currency   String
+    createdAt  DateTime @default(now())
+    status     String
+    user       User     @relation(fields: [userId], references: [id])
+    userId     String
+}
